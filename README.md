@@ -11,8 +11,14 @@ Insights Entitlement service repo: https://github.com/RedHatInsights/entitlement
 
 ### Add an entitlement
 
-Entitlements can be added to the `/configs/bundles.yml` file, namespaced by
-service/feature/offering.
+Entitlements are defined in environment-specific `bundles.yml` files:
+
+- `configs/stage/bundles.yml` — commercial staging (update this first)
+- `configs/prod/bundles.yml` — commercial production
+- `configs/fedramp-stage/bundles.yml` — FedRAMP staging
+- `configs/fedramp-prod/bundles.yml` — FedRAMP production
+
+Each bundle is namespaced by service/feature/offering. Update stage before prod. FedRAMP files use flat `skus` lists only (no `eval_skus`/`paid_skus` split).
 
 ### Format of entitlements
 
@@ -38,16 +44,16 @@ Entitlements may be defined by:
 ```
 More details on how this option works below. 
 
-2. Requiring the account number exists on the request
+2. Requiring a valid org ID on the request
 ```yaml
 - name: example_entitlement
-  use_valid_acc_num: true
+  use_valid_org_id: true
 ```
 
-3. Allowing entitlement for all by default
+3. Allowing entitlement for all by default (use sparingly — grants universal access)
 ```yaml
 - name: example_entitlement
-  use_valid_acc_num: false
+  use_valid_org_id: false
 ```
 
 ### Eval & Paid Skus
@@ -74,3 +80,7 @@ we can see following values of `is_trial` when querying `GET /services` in the e
 When your PR is merged, you will need to update the sha reference of the `entitlements-bundle-config-<env>` deployment in app interface to the latest commit after merge.
 Once that is done, entitlements will bounce in the corresponding environment(s) and the config changes should be reflected.
 Contact the Access & Management team (@crc-entitlements-team) for any assistance.
+
+## Further Reading
+
+- [`docs/security-guidelines.md`](docs/security-guidelines.md) — SKU conventions, bundle mechanisms, YAML formatting rules, and PR review checklist
